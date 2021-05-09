@@ -29,8 +29,8 @@ public class Cuenta {
   public void poner(double cuanto) {
     this.validarMontoNoNegativo(cuanto);
     this.validarMaximaCantidadDepositos();
-
-    new Movimiento(LocalDate.now(), cuanto, true).agregateA(this); // Middle man
+    this.agregarMovimiento(LocalDate.now(), cuanto, true);
+    this.modificarSaldo(cuanto);
   }
 
   //Long method
@@ -38,7 +38,9 @@ public class Cuenta {
     this.validarMontoNoNegativo(cuanto);
     this.validarSaldoNoMenor(cuanto);
     this.validarMaximaExtraccionDiaria(cuanto);
-    new Movimiento(LocalDate.now(), cuanto, false).agregateA(this); // Middle Man
+    this.agregarMovimiento(LocalDate.now(),cuanto,false);
+    this.modificarSaldo(-cuanto);
+
   }
 
   public void agregarMovimiento(LocalDate fecha, double cuanto, boolean esDeposito) {
@@ -97,6 +99,10 @@ public class Cuenta {
 
   public void setSaldo(double saldo) {
     this.saldo = saldo;
+  }
+
+  void modificarSaldo(double monto){
+    this.saldo += monto;
   }
 
 }
