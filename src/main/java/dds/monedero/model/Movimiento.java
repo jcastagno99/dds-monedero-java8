@@ -37,7 +37,7 @@ public class Movimiento {
 
   public boolean isDeposito() {
     return esDeposito;
-  }
+  } //Primitive Obsession
 
   public boolean isExtraccion() {
     return !esDeposito;
@@ -48,7 +48,7 @@ public class Movimiento {
     cuenta.agregarMovimiento(fecha, monto, esDeposito);
   }
 
-  public double calcularValor(Cuenta cuenta) {
+  public double calcularValor(Cuenta cuenta) { //Missing polymorphism
     if (esDeposito) {
       return cuenta.getSaldo() + getMonto();
     } else {
