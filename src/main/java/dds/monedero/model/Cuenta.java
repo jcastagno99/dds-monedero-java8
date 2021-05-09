@@ -27,7 +27,6 @@ public class Cuenta {
   }
 
   public void poner(double cuanto) {
-
     this.validarMontoNoNegativo(cuanto);
     this.validarMaximaCantidadDepositos();
 
@@ -47,11 +46,14 @@ public class Cuenta {
     movimientos.add(movimiento);
   }
 
-  public double getMontoExtraidoA(LocalDate fecha) { //Message Chain
+  public double getMontoExtraidoA(LocalDate fecha) {
     return getMovimientos().stream()
-        .filter(movimiento -> !movimiento.isDeposito() && movimiento.getFecha().equals(fecha))
-        .mapToDouble(Movimiento::getMonto)
+        .filter(movimiento -> extraccionesDeLaFecha(movimiento, fecha)).mapToDouble(Movimiento::getMonto)
         .sum();
+  }
+
+  public boolean extraccionesDeLaFecha(Movimiento movimiento, LocalDate fecha){
+    return !movimiento.isDeposito() && movimiento.getFecha().equals(fecha);
   }
 
   public void validarMontoNoNegativo(double monto){
