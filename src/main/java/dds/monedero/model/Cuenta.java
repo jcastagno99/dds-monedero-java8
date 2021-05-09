@@ -29,33 +29,27 @@ public class Cuenta {
   public void poner(double cuanto) {
     this.validarMontoNoNegativo(cuanto);
     this.validarMaximaCantidadDepositos();
-    this.agregarMovimiento(LocalDate.now(), cuanto, true);
+    this.agregarMovimiento(new Deposito(LocalDate.now(),cuanto));
     this.modificarSaldo(cuanto);
   }
 
-  //Long method
   public void sacar(double cuanto) {
     this.validarMontoNoNegativo(cuanto);
     this.validarSaldoNoMenor(cuanto);
     this.validarMaximaExtraccionDiaria(cuanto);
-    this.agregarMovimiento(LocalDate.now(),cuanto,false);
+    this.agregarMovimiento(new Extraccion(LocalDate.now(),cuanto));
     this.modificarSaldo(-cuanto);
 
   }
 
-  public void agregarMovimiento(LocalDate fecha, double cuanto, boolean esDeposito) {
-    Movimiento movimiento = new Movimiento(fecha, cuanto, esDeposito);
+  public void agregarMovimiento(Movimiento movimiento) {
     movimientos.add(movimiento);
   }
 
   public double getMontoExtraidoA(LocalDate fecha) {
     return getMovimientos().stream()
-        .filter(movimiento -> extraccionesDeLaFecha(movimiento, fecha)).mapToDouble(Movimiento::getMonto)
+        .filter(movimiento -> movimiento.fueExtraido(fecha)).mapToDouble(Movimiento::getMonto)
         .sum();
-  }
-
-  public boolean extraccionesDeLaFecha(Movimiento movimiento, LocalDate fecha){
-    return !movimiento.isDeposito() && movimiento.getFecha().equals(fecha);
   }
 
   public void validarMontoNoNegativo(double monto){
@@ -86,7 +80,7 @@ public class Cuenta {
   }
 
   public long cantidadDeDepositos(){
-    return movimientos.stream().filter(Movimiento::isDeposito).count();
+    return movimientos.stream().filter(Movimiento::esDeposito).count();
   }
 
   public List<Movimiento> getMovimientos() {
