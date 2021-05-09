@@ -59,7 +59,7 @@ public class Cuenta {
   }
 
   public void validarMaximaCantidadDepositos(){
-    if(this.cantidadDeDepositos() <= 3){
+    if(this.cantidadDeDepositos() >= 3){
       throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
     }
   }

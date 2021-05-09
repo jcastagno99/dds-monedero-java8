@@ -7,7 +7,7 @@ import dds.monedero.exceptions.SaldoMenorException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MonederoTest {
   private Cuenta cuenta;
@@ -18,24 +18,26 @@ public class MonederoTest {
   }
 
   @Test
-  void Poner() {
+  void PodemosDepositarUnMonto() {
     cuenta.poner(1500);
+    assertEquals(cuenta.getSaldo(),1500);
   }
 
   @Test
-  void PonerMontoNegativo() {
+  void NoPodemosDepositarUnMontoNegativo() {
     assertThrows(MontoNegativoException.class, () -> cuenta.poner(-1500));
   }
 
   @Test
-  void TresDepositos() {
+  void PodemosDepositarTresVeces() {
     cuenta.poner(1500);
     cuenta.poner(456);
     cuenta.poner(1900);
+    assertEquals(cuenta.getSaldo(),3856);
   }
 
   @Test
-  void MasDeTresDepositos() {
+  void NoPodemosDepositarMasDeTresVeces() {
     assertThrows(MaximaCantidadDepositosException.class, () -> {
           cuenta.poner(1500);
           cuenta.poner(456);
@@ -45,7 +47,7 @@ public class MonederoTest {
   }
 
   @Test
-  void ExtraerMasQueElSaldo() {
+  void NoPodemosExtraerMasQueElSaldo() {
     assertThrows(SaldoMenorException.class, () -> {
           cuenta.setSaldo(90);
           cuenta.sacar(1001);
@@ -53,7 +55,7 @@ public class MonederoTest {
   }
 
   @Test
-  public void ExtraerMasDe1000() {
+  public void NoPodemosExtraerMasDelLimitePermitido() {
     assertThrows(MaximoExtraccionDiarioException.class, () -> {
       cuenta.setSaldo(5000);
       cuenta.sacar(1001);
@@ -61,8 +63,24 @@ public class MonederoTest {
   }
 
   @Test
-  public void ExtraerMontoNegativo() {
+  public void NoPodemosExtraerUnMontoNegativo() {
     assertThrows(MontoNegativoException.class, () -> cuenta.sacar(-500));
   }
+
+  @Test
+  public void ElSaldoSeActualizaAlSacarDineroDeUnaCuenta() {
+    cuenta.setSaldo(2000);
+    cuenta.sacar(700);
+    assertEquals(1300,cuenta.getSaldo());
+  }
+
+  @Test
+  public void LosMovimientosSeRegistranCorrectamente() {
+    cuenta.setSaldo(2000);
+    cuenta.sacar(700);
+    cuenta.poner(200);
+    assertEquals(2, (long) cuenta.getMovimientos().size());
+  }
+
 
 }
